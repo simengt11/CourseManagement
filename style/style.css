@@ -1,3 +1,6 @@
-.blue{
-    color: #3B8EF7;
+.bg-blue{
+    background-color: #87B4ED !important;
+}
+.margin-custom{
+    margin-top: 15px;
 }
