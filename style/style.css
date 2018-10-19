@@ -2,5 +2,21 @@
     background-color: #87B4ED !important;
 }
 .margin-custom{
-    margin-top: 15px;
+    margin-top: 10px;
+}
+span.hide{
+    display: none;
+    margin-left: 150px;
+}
+span.show{
+    margin-left: 150px;
+    color: red;
+}
+
+input.invalid{
+	border: 1px solid red;
+}
+
+input.valid{
+	border: 1px solid green;
 }
