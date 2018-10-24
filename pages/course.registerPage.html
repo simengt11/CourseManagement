@@ -1,16 +1,108 @@
 <html>
     <head>
-        <title>Course Register Page</title>
+        <title>Student Register Page</title>
         <meta charset="UTF-8">
-        <!--bootstrap css-->
+        <!-- css-->
         <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="../vendor/fontawesome/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="../vendor/fontawesome/css/all.css">
+        <link rel="stylesheet" type="text/css" href="../style/style.css">
     </head>
     <body>
-            Course Register Page
-        <!--Jquery-->
+        <!--Navigation-->
+        <nav class="navbar navbar-expand-lg navbar-light bg-blue">
+                <a class="navbar-brand" href="#">Courses Management</a>
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+                  <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNavDropdown">
+                  <ul class="navbar-nav">
+                    <li class="nav-item dropdown active">
+                      <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        Student
+                      </a>
+                      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="#">Register</a>
+                        <a class="dropdown-item" href="#">Student List</a>
+                      </div>
+                    </li>
+                    <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              Courses
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                              <a class="dropdown-item" href="#">Create Courses</a>
+                              <a class="dropdown-item" href="#">List Course</a>
+                            </div>
+                    </li>
+                  </ul>
+                </div>
+              </nav>
+        <!--card register-->
+        <div class="container">
+            <div class="card mx-auto margin-custom" style="width: 80rem;">
+                <div class="card-body">
+                    <div class=row>
+                        <div class="col">
+                                <center>
+                                    <h5 scope="col">Student List</h5><hr>
+                                    <div class="form-group">
+                                        <select name="" id="selectSearch">
+                                            <option value="code">Student Code</option>
+                                            <option value="name">Student Name</option>
+                                        </select>
+                                        <input id="inputSearch" type="text">
+                                        <button id="btnSearchStudent" class="btn btn-outline-success"><i class="fa fa-search"></i></button>
+                                    </div>
+                                </center>
+
+                                <table class="table table-striped">
+                                        <thead>
+                                        <tr>
+                                            <th scope="col">Student Code</th>
+                                            <th scope="col">Student Name</th>
+                                            <th scope="col">Action</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody id="myTbody">
+                                            <tr>
+                                                <td>test</td>
+                                                <td>test</td>
+                                                <td>
+                                                    <button class="btn btn-outline-primary btnChoose" type="button"><i class="fa fa-hand-pointer"></i></button>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                </table>
+                        </div>
+                        <div class="col">
+                                <center><h5 scope="col">Register Course</h5><hr></center>
+                                
+                                <div class="form-group ">
+                                        <label class="col-md-3" for="">Student Code:</label>
+                                        <input id="inputStudentCode" class="col-md-8" type="text" disabled>
+                                </div>
+                                <div class="form-group ">
+                                        <label class="col-md-3" for="">Student Name:</label>
+                                        <input id="inputStudentName" class="col-md-8" type="text" disabled>
+                                </div>
+                                <div class="form-group ">
+                                        <label class="col-md-3" for="">Course Name:</label>
+                                        <select id="selectCourse" class="col-md-8">
+                                            <option value="">Test1</option>
+                                            <option value="">Test2</option>
+                                        </select>
+                                </div>
+                                <center><button id="btnStudentRegister" type="button" class="btn btn-primary">Register&ensp;<i class="fa fa-edit"></i></button></center>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    
+        <!--js-->
         <script src="../vendor/jquery/jquery-3.3.1.js"></script>
         <script src="../vendor/bootstrap/js/bootstrap.js"></script>
-        <script src="../js/course.registerPage.js"></script>
+        <script src="../js/student.registerPage.js"></script>
     </body>
 </html>

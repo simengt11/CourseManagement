@@ -102,10 +102,10 @@ $("#fileInput").on("blur",function(){
 
 //submit
 $("#btnStudentRegister").on("click",function(){
-    
+    $("#myModalCenter").modal("show");
+    let student={};
     if(valid){
         let fileInput=$("#fileInput");
-        let student;
         student.studentCode=$("#txtStudentCode").val();
         student.studentEmail=$("#txtEmail").val();
         student.studentFullName=$("#txtFullname").val();
@@ -120,19 +120,38 @@ $("#btnStudentRegister").on("click",function(){
         //Insert student information to student list
         let insertStudent=registerStudentList(data);
         insertStudent.done(function(insertStudentResponse){
+            console.log("---insert student response!---");
+            console.log(insertStudentResponse);
             //Create folder with folder name is student code
             let createFolder= createStudentAttachmentFolder(insertStudentResponse.d.StudentCode);
             createFolder.done(function(createFoldeRresponse){
+                console.log("---create Folder response!---");
+                console.log(createFoldeRresponse);
                 //Read file
                 let readFile=getFileBuffer(fileInput);
                 readFile.done(function(arrayBuffer){
                     //Upload file to folder
-                    let uploadFile=uploadStudentFile(arrayBuffer,createFoldeRresponse.ServerRelativeUrl,fileInput);
+                    let uploadFile=uploadStudentFile(arrayBuffer,createFoldeRresponse.d.ServerRelativeUrl,fileInput);
                     uploadFile.done(function(uploadFileResponse){
-                        //Update file properties
-                        let updateFile=updateFilePropertieLevel(uploadFileResponse.ListItemAllFields.__deferred.uri,insertStudentResponse.d.Id)
-                        alert("Register Successfully!");
-                        console.log(response);
+                        console.log("---upload file response!---");
+                        console.log(uploadFileResponse);
+                        //Get id
+                        let getListId=getListItem();
+                        getListId.done(function(getListIdResponse){
+                            //Update file properties
+                            console.log("---List Id response!---");
+                            console.log(getListIdResponse);
+                            let fileID=getListIdResponse.d.results[getListIdResponse.d.results.length-1].Id;
+                            let updateFile=updateFilePropertieLevel(fileID,insertStudentResponse.d.Id)
+                            updateFile.done(function(updateFileResponse){
+                                console.log("---update file response!---");
+                                console.log(updateFileResponse);
+                                $(".loader").addClass("hide");
+                                $(".modal-header").addClass("hide")
+                                $(".showMessage").removeClass("hide");
+                                $(".modal-footer").removeClass("hide");
+                                }).fail(onError);
+                            }).fail(onError);
                     }).fail(onError);
                 }).fail(onError);
             }).fail(onError);
@@ -142,9 +161,10 @@ $("#btnStudentRegister").on("click",function(){
     }
 });
 
+//Register student function
 function registerStudentList(data){
     return $.ajax({
-        url:serverUrl+"/sites/CourseManagementSite/_api/web/lists/getbytitle('Students')/items",
+        url:serverUrl+"/_api/web/lists/getbytitle('Student')/items",
         method: "POST", //Specifies the operation to create the list item  
             data:JSON.stringify(data),
             contentType:"application/json;odata=verbose",
@@ -169,26 +189,24 @@ function getFileBuffer(fileInput) {
     return deferred.promise();
 }
 
-function updateFilePropertieLevel(response,studentId){
-    var data={ '__metadata': { 'type': 'SP.Data.SiteAssetsItem' }, 'FileLeafRef': response.Name,'StudentId':studentId};
+//get id from listitem
+
+function getListItem(){
     return $.ajax({
-        url: response.uri,
-        method: "POST",
-        data: JSON.stringify(data),
-        contentType: "application/json;odata=verbose", 
+        url: serverUrl+"/_api/web/lists/GetByTitle('StudentAttachments')/items",
+        method: "GET", 
         headers: {
-            "X-RequestDigest": $("#__REQUESTDIGEST").val(),
-            "Accept": "application/json;odata=verbose",
-            "IF-MATCH":"*",
-            "X-HTTP-Method":"MERGE"
+        "accept": "application/json;odata=verbose",
+        "content-type": "application/json;odata=verbose"
         }
-    });
+});
 }
 
+//Create student attachment folder
 function createStudentAttachmentFolder(foderName){
     let data={ "__metadata": { "type": "SP.Folder" }, "ServerRelativeUrl":"/sites/CourseManagementSite/StudentAttachments/"+foderName};
     return $.ajax({
-        url: "https://vosimen.sharepoint.com/sites/CourseManagementSite/_api/web/Folders",
+        url: serverUrl+"/_api/web/Folders",
         method: "POST",
         data: JSON.stringify(data),
         contentType: "application/json;odata=verbose", 
@@ -204,6 +222,11 @@ function onError(error) {
     alert(error.responseText);
 }
 
+$("#btnCloseModal").on("click",function(){
+    $("#myModalCenter").modal("hide");
+});
+
+//Upload file function
 function uploadStudentFile(arrayBuffer,folderUrl,fileInput){
     // Get the file name from the file input control on the page.
     let parts = fileInput[0].value.split('\\');
@@ -212,13 +235,30 @@ function uploadStudentFile(arrayBuffer,folderUrl,fileInput){
     // Send the request and return the response.
     // This call returns the SharePoint file.
     return $.ajax({
-        url: serverUrl+"/sites/CoursesManagement/_api/web/GetFolderByServerRelativeUrl('"+folderUrl+"')/Files/add(overwrite=true,url='"+fileName+"')",
+        url: serverUrl+"/_api/web/GetFolderByServerRelativeUrl('"+folderUrl+"')/Files/add(overwrite=true,url='"+fileName+"')",
         type: "POST",
         data: arrayBuffer,
         processData: false,
         headers: {
             "accept": "application/json;odata=verbose",
             "X-RequestDigest": $("#__REQUESTDIGEST").val()
+        }
+    });
+}
+//Update file properties function
+function updateFilePropertieLevel(fieldID,studentId){
+    let data={ '__metadata': { 'type': 'SP.Data.StudentAttachmentsItem' },'StudentId':studentId.toString()};
+    let uri=serverUrl+"/_api/web/lists/GetByTitle('StudentAttachments')/items("+fieldID+")"
+    return $.ajax({
+        url: uri,
+        method: "POST",
+        data: JSON.stringify(data),
+        contentType: "application/json;odata=verbose", 
+        headers: {
+            "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+            "Accept": "application/json;odata=verbose",
+            "IF-MATCH":"*",
+            "X-HTTP-Method":"MERGE"
         }
     });
 }

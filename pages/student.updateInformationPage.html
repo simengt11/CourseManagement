@@ -8,34 +8,6 @@
         <link rel="stylesheet" type="text/css" href="../style/style.css">
     </head>
     <body>
-            <nav class="navbar navbar-expand-lg navbar-light bg-blue">
-                    <a class="navbar-brand" href="#">Courses Management</a>
-                    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
-                      <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNavDropdown">
-                      <ul class="navbar-nav">
-                        <li class="nav-item dropdown active">
-                          <a class="nav-link dropdown-toggle " href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Student
-                          </a>
-                          <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Register</a>
-                            <a class="dropdown-item" href="#">Student List</a>
-                          </div>
-                        </li>
-                        <li class="nav-item dropdown ">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                  Courses
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                  <a class="dropdown-item" href="#">Create Courses</a>
-                                  <a class="dropdown-item" href="#">List Course</a>
-                                </div>
-                        </li>
-                      </ul>
-                    </div>
-                  </nav>
             <!--card register-->
             <div class="container">
                 <div class="card mx-auto margin-custom" style="width: 40rem;">
@@ -50,15 +22,18 @@
                     <div class="card-body">
                         <div class="form-group">
                             <label class="col-md-3">Student Code <span class="text-danger">*</span>:</label>
-                            <input class="col-md-8" type="text">
+                            <input id="txtStudentCode" class="col-md-8" type="text" disabled>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3">Email <span class="text-danger">*</span>:</label>
-                            <input class="col-md-8" type="text">
+                            <input id="txtEmail" class="col-md-8" type="text"><br>
+                            <span class="hide">Email is required!</span>
+                            <span class="hide">Email is incorrect!</span>
                         </div>
                         <div class="form-group">
                             <label class="col-md-3">Full Name <span class="text-danger">*</span>:</label>
-                            <input class="col-md-8" type="text">
+                            <input id="txtFullName" class="col-md-8" type="text"><br>
+                            <span class="hide">Full name is required!</span>
                         </div>
                         <div class="form-group">
                                 <label class="col-md-3">Attachments:</label>
@@ -67,8 +42,7 @@
                         <hr>
                         <div class="form-group ">
                             <center>
-                                <button type="button" class="btn btn-success">Update&ensp;<i class="fa fa-edit"></i></button>
-                                <button type="button" class="btn btn-primary">Back&ensp;<i class="fa fa-backward"></i></button>
+                                <button id="btnUpdate" type="submit" class="btn btn-success">Update&ensp;<i class="fa fa-edit"></i></button>
                             </center>
                         </div>
                     </div>
@@ -87,24 +61,17 @@
                           <div class="form-group">
                               <label>Upload a new file:</label>
                             <input id="inputFile" type="file">
+                            <button id="btnUploadFile" class="btn btn-success"><i class="fa fa-upload"></i></button>
                           </div>
                           <hr>
-                          <table id="studentFileTable" class="table table-striped">
+                          <table  class="table table-striped">
                                 <thead>
                                   <tr>
-                                    <th scope="col">Id</th>
                                     <th scope="col">File Name</th>
                                     <th scope="col">Action</th>
                                   </tr>
                                 </thead>
-                                <tbody>
-                                  <tr>
-                                    <th scope="row">1</th>
-                                    <td>Mark</td>
-                                    <td>
-                                        <button class="btn btn-danger" type="button"><i class="fa fa-trash"></i></button>
-                                    </td>
-                                  </tr>
+                                <tbody id="studentFileTbody">
                                 </tbody>
                               </table>
                         </div>
