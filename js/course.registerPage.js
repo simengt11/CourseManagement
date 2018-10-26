@@ -1,178 +1,157 @@
 var serverUrl=_spPageContextInfo.webAbsoluteUrl;
-var studentId;
-var studentArray=[];
 $(document).ready(function(){
-    //get student
-    $.ajax({
-        url:serverUrl+"/_api/web/lists/getbytitle('Student')/items",
-        method:"GET",
-        headers:{
-            "accept":"application/json;odata=verbose",
-            "content-type":"application/json;odata=verbose",
-            "X-RequestDigest": $("#__REQUESTDIGEST").val()
+    var getStudent=getStudentFromList();
+    getStudent.done(function(getStudentResponse){
+        if(getStudentResponse.d.results.length>0){
+            $.each(getStudentResponse.d.results,function(key,item){
+                $("#myTbody").append("<tr data-id="+item.Id+" data-content="+item.StudentCode+">"
+                +"<th scope=\"row\">"+item.Id+"</th>"
+                +"<td>"+item.StudentCode+"</td>"
+                +"<td>"+item.Full_x0020_Name+"</td>"
+                +"<td>"+item.Email+"</td>"
+                +"<td>"
+                +"<button class=\"btn btn-outline-primary btnEditStudent\" type=\"button\"><i class=\"fa fa-edit\"></i></button>"
+                +"<button class=\"btn btn-outline-danger btnDeleteStudent\" type=\"button\"><i class=\"fa fa-trash\"></i></button>"
+                +"</td>"
+                +"</tr>")
+            });
+            
+        }else{
+            alert("Have no items to show!");
         }
-    }).done(function(getStudentRespone){
-        console.log("--get student success repsone!--")
-        console.log(getStudentRespone)
-        $.each(getStudentRespone.d.results,function(key, value){
-            let stringTemp="<tr data-id="+value.Id+">"
-                            +"<td>"+value.StudentCode+"</td>"
-                            +"<td>"+value.Full_x0020_Name+"</td>"
-                            +"<td>"
-                            +"<button class=\"btn btn-outline-primary btnChoose\" type=\"button\"><i class=\"fa fa-hand-pointer\"></i></button>"
-                            +"</td>"
-                            +"</tr>"
-            $("#myTbody").append(stringTemp);
-            studentArray.push(value);
-        })
-        
-    }).fail(function(errorResponse){
-        console.log("--get student fail repsone!--")
-        console.log(errorResponse)
-    });
-
-    
-    //Get course
-    $.ajax({
-        url:serverUrl+"/_api/web/lists/getbytitle('Course')/items",
-        method:"GET",
-        headers:{
-            "accept":"application/json;odata=verbose",
-            "content-type":"application/json;odata=verbose",
-            "X-RequestDigest": $("#__REQUESTDIGEST").val()
-        }
-    }).done(function(getCourseRespone){
-        let countTemp=0;
-        console.log("--get course success repsone!--")
-        console.log(getCourseRespone)
-        //get course_student
-            $.ajax({
-                url:serverUrl+"/_api/web/lists/getbytitle('StudentRegisterCourse')/items",
-                method:"GET",
-                headers:{
-                    "accept":"application/json;odata=verbose",
-                    "content-type":"application/json;odata=verbose",
-                    "X-RequestDigest": $("#__REQUESTDIGEST").val()
-                }
-            }).done(function(studentRegisterCourseResponse){
-                $.each(getStudentRespone.d.results,function(key, value){
-                    //check course status
-                    if(value.Active){
-                        //count course attenddance
-                        $.each(studentRegisterCourseResponse.d.results,function(key2,value2){
-                            if(value2.CourseId===value.id){
-                                countTemp++;
-                            }
-                        })
-                        if(countTemp<value.MaximumAttendance){
-                            $("#selectCourse").append("<option value="+value.Id+">"+value.Title+"</option>")
-                        }
-                    }
-                })
-            })
-    }).fail(function(errorResponse){
-        console.log("--get course fail repsone!--")
-        console.log(errorResponse)
     });
 });
-
-//choose student button event
-$("#myTbody").on("click",".btnChoose",function(){
-    studentId=$(this).parent().parent().data("id");
-    $.ajax({
-        url:serverUrl+"/_api/web/lists/getbytitle('Student')/items("+studentId+")",
-        method:"GET",
-        headers:{
-            "accept":"application/json;odata=verbose",
-            "content-type":"application/json;odata=verbose",
-            "X-RequestDigest": $("#__REQUESTDIGEST").val()
-        }
-    }).done(function(getAStudentRepsone){
-        console.log("Get a student success response!");
-        console.log(getAStudentRepsone);
-        $("#inputStudenCode").val(getAStudentRepsone.d.StudentCode);
-        $("#inputStudenName").val(getAStudentRepsone.d.Full_x0020_Name);
-    })
-})
-
-$("#btnStudentRegister").on("click",function(){
-    if(typeof(studentId)==="undefined"){
-        alert("Please choose a student!");
-    }else{
-        let data={ "__metadata": { "type": "SP.Data.StudentRegisterCourseListItem" }, 
-        "StudentId":studentId,
-        "CourseId":$("#selectCourse").val()
-        }
-        $.ajax({
-            url:serverUrl+"/_api/web/lists/getbytitle('StudentRegisterCourse')/items",
-            method:"POST",
-            data:JSON.stringify(data),
-            headers:{
-                "accept":"application/json;odata=verbose",
-                "content-type":"application/json;odata=verbose",
-                "X-RequestDigest": $("#__REQUESTDIGEST").val()
+//Get all student
+function getStudentFromList(){
+    return $.ajax({
+        url:serverUrl+"/_api/web/lists/getbytitle('Student')/items",
+        method: "GET", //Specifies the operation to create the list item  
+            contentType:"application/json;odata=verbose",
+            headers: {
+                "Accept": "application/json;odata=verbose", //It defines the Data format   
+                "X-RequestDigest": $("#__REQUESTDIGEST").val() //It gets the digest value
             }
-        }).done(function(registerCourseResponse){
-            console.log("--register course success response--")
-            console.log(registerCourseResponse);
-            alert("Register course successfully!");
-        }).fail(function(errorResponse){
-            console.log("--register course fail response--")
-            console.log(errorResponse);
-            alert("Have an error when register course!");
-        });
-        
-    }
-})
-//search student function
-function searchStudent(searchBy,searchContent,searchSource){
-    let results=[];
-    if(searchBy==="code"){
-        $.each(searchSource,function(key, value){
-            if(value.StudentCode.search(searchContent)!==-1){
-                results.push(value);
-            }
-        });
-    }else{
-        $.each(searchSource,function(key, value){
-            if(value.Full_x0020_Name.search(searchContent)!==-1){
-                results.push(value);
-            }
-        });
-    }
-    return results
+    });
 }
 
-$("#btnSearchStudent").on("click",function(){
-    if(!$("#inputSearch").val()){
-        $("#myTbody").empty();
-        $.each(studentArray,function(key,value){
-            let stringTemp="<tr data-id="+value.Id+">"
-                            +"<td>"+value.StudentCode+"</td>"
-                            +"<td>"+value.Full_x0020_Name+"</td>"
-                            +"<td>"
-                            +"<button class=\"btn btn-outline-primary btnChoose\" type=\"button\"><i class=\"fa fa-hand-pointer\"></i></button>"
-                            +"</td>"
-                            +"</tr>"
-            $("#myTbody").append(stringTemp);
-        })
-    }else{
-        let results=searchStudent($("#selectSearch").val(),$("#inputSearch").val(),studentArray);
-        if(results.length=0){
-            alert("Have no result!");
-        }else{
-            $("#myTbody").empty();
-        $.each(results,function(key,value){
-            let stringTemp="<tr data-id="+value.Id+">"
-                            +"<td>"+value.StudentCode+"</td>"
-                            +"<td>"+value.Full_x0020_Name+"</td>"
-                            +"<td>"
-                            +"<button class=\"btn btn-outline-primary btnChoose\" type=\"button\"><i class=\"fa fa-hand-pointer\"></i></button>"
-                            +"</td>"
-                            +"</tr>"
-            $("#myTbody").append(stringTemp);
-        })
+function OpenDialog(URL) {
+    var options = SP.UI.$create_DialogOptions();
+    options.url = URL;
+    options.width = 1024;
+    options.height = 720;
+    SP.UI.ModalDialog.showModalDialog(options);
+}
+
+//delele student function
+function deleteAStudentByStudentId(studentId){
+    return $.ajax({
+        url:serverUrl+"/_api/web/lists/getbytitle('Student')/items("+studentId+")",
+        method: "POST", //Specifies the operation to create the list item  
+        contentType:"application/json;odata=verbose",
+        headers: {
+            "Accept": "application/json;odata=verbose",   
+            "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+            "IF-MATCH": "*",
+            "X-HTTP-Method": "DELETE"
         }
-    }
-    
+    });
+}
+
+//delele folder function
+function deleteAFolderByFolderName(name){
+    return $.ajax({
+        url:serverUrl+"/_api/web/GetFolderByServerRelativeUrl('/sites/CourseManagementSite/StudentAttachments/"+name+"')",
+        method: "POST", //Specifies the operation to create the list item  
+        contentType:"application/json;odata=verbose",
+        headers: {
+            "Accept": "application/json;odata=verbose",   
+            "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+            "IF-MATCH": "*",
+            "X-HTTP-Method": "DELETE"
+        }
+    });
+}
+
+//delele student register code by id
+function deleteStudentCourseById(Id){
+    return $.ajax({
+        url:serverUrl+"/_api/web/lists/getbytitle('StudentRegisterCourse')/items("+Id+")",
+        method: "POST", //Specifies the operation to create the list item  
+        contentType:"application/json;odata=verbose",
+        headers: {
+            "Accept": "application/json;odata=verbose",   
+            "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+            "IF-MATCH": "*",
+            "X-HTTP-Method": "DELETE"
+        }
+    });
+}
+
+//delele student register code by id
+function getAllStudentCourse(){
+    return $.ajax({
+        url:serverUrl+"/_api/web/lists/getbytitle('StudentRegisterCourse')/items",
+        method: "GET", //Specifies the operation to create the list item  
+        contentType:"application/json;odata=verbose",
+        headers: {
+            "Accept": "application/json;odata=verbose",   
+            "X-RequestDigest": $("#__REQUESTDIGEST").val(),
+        }
+    });
+}
+//function error
+function onError(error){
+    console.log(error);
+}
+
+$("#myTbody").on("click",".btnEditStudent",function(){
+    let self=$(this);
+    sessionStorage.setItem("StudentId", self.parent().parent().data("id"));
+    OpenDialog("../SitePages/student.updateInformationPage.aspx")
+});
+
+$("#myTbody").on("click",".btnDeleteStudent",function(){
+    alert("button was clicked");
+    let parentElement= $(this).parent().parent();
+    let studentID=parentElement.data("id");
+    let studentCode=parentElement.data("content");
+    let studentCourseIdArray=[];
+    //delete student folder
+    let deleteStudentFolder=deleteAFolderByFolderName(studentCode);
+        deleteStudentFolder.done(function(deleteStudentFolderRespones){
+            console.log("delete student folder success!");
+            console.log(deleteStudentFolderRespones);
+            let getStudentCourse=getAllStudentCourse();
+            //get student register course id of the student who will be deteled
+            getStudentCourse.done(function(getStudentCourseRepsone){
+                console.log("get student register course success!");
+                console.log(getStudentCourseRepsone);
+                
+                $.each(getStudentCourseRepsone.d.results,function(key,item){
+                    if(item.StudentId===studentID.toString()){
+                        studentCourseIdArray.push(item.Id);
+                    }
+                })
+                //delete student register course
+                if(studentCourseIdArray.length>0){
+                    $.each(studentCourseIdArray,function(key,id){
+                        deleteStudentCourseById(id).done(function(data){
+                            console.log("delete student register course id {0} success",id);
+                        }).fail(function(error){
+                            console.log("Have an error when delete student register course id {0}",id);
+                            console.log(error)
+                        })
+                    })
+                }
+
+                //delete student
+                let deleteStudent=deleteAStudentByStudentId(studentID);
+                deleteStudent.done(function(deleteStudentResponse){
+                    console.log("delte student success!");
+                    console.log(deleteStudentResponse);
+                    $("tr[data-id="+studentID+"]").remove();
+                    alert("Delete student succesfully!");
+                }).fail(onError);
+            }).fail(onError);
+        }).fail(onError);
 });

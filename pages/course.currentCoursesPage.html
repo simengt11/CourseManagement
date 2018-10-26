@@ -4,7 +4,8 @@
         <meta charset="UTF-8">
         <!--bootstrap css-->
         <link rel="stylesheet" type="text/css" href="../vendor/bootstrap/css/bootstrap.css">
-        <link rel="stylesheet" type="text/css" href="../vendor/fontawesome/font-awesome.min.css">
+        <link rel="stylesheet" type="text/css" href="../vendor/fontawesome/css/all.css">
+        <link rel="stylesheet" type="text/css" href="../style/style.css">
     </head>
     <body>
             <!--Navigation-->
@@ -50,13 +51,53 @@
                         <th scope="col">Action</th>
                       </tr>
                     </thead>
-                    <tbody id="myTbody">
+                    <tbody id="myCourseTbody">
                     </tbody>
                   </table>
     </div>
+     <!--card course update-->
+     <div id="studentModal" class="modal fade" id="updateCourseModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" data-backdrop="static">
+        <div class="modal-dialog modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Student List</h5>
+                    <button type="button" data-dismiss="modal" class="close"><i class="fa fa-times"></i></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card mx-auto margin-custom">
+                        <div class="card-body">
+                            <table class="table table-striped">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Id</th>
+                                    <th scope="col">Student Code</th>
+                                    <th scope="col">Full Name</th>
+                                    <th scope="col">Email</th>
+                                  </tr>
+                                </thead>
+                                <tbody id="myStudentTbody">
+                                  <tr>
+                                    <th scope="row">1</th>
+                                    <td>Mark</td>
+                                    <td>Otto</td>
+                                    <td>@mdo</td>
+                                  </tr>
+                                </tbody>
+                              </table>
+                            
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" data-dismiss="modal" class="btn btn-outline-danger"><i class="fa fa-times"></i></button>
+            </div>
+            </div>
+        </div>
+    </div>
+
         <!--Jquery-->
         <script src="../vendor/jquery/jquery-3.3.1.js"></script>
         <script src="../vendor/bootstrap/js/bootstrap.js"></script>
-        <script src="../js/course.listPage.js"></script>
+        <script src="../js/course.currentCoursesPage.js"></script>
     </body>
 </html>
