@@ -1,0 +1,138 @@
+﻿<script type="text/javascript" src="../../SiteAssets/js/controllers/userProfile/user.profile.search.controller.js"></script>
+<script type="text/javascript" src="../../SiteAssets/js/services/user.profile.search.service.js"></script>
+<script type="text/javascript" src="../../SiteAssets/js/models/DivisionModel.js"></script>
+<script type="text/javascript" src="../../SiteAssets/js/models/UserProfileModel.js"></script>
+<script>
+    document.getElementById("WebPartTitleWPQ3").style.display = "none";
+</script>
+<!-- start add js new style -->
+<!-- content wrapper -->
+<div ng-controller="userProfileSearchController as vm">
+    <div id="search-asset-preparation" class="content-bottom">
+        <!-- Search box-->
+        <div class="bg-content bg-content-search clearfix">
+            <div data-toggle="collapse" data-target="#search-box" class="header-box" aria-expanded="true">
+                <h5 data-lang-token="searchCriteria">Search Criteria<br /></h5>
+                <i class="fa fa-minus pull-right" aria-hidden="true"></i>
+            </div>
+            <div class="collapse show" id="search-box">
+                <div class="form-search col-sm-12 no-padding">
+                    <div class="main-box-bg clearfix ">
+                        <div class="form-group clearfix row">
+                            <!--Account Name-->
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12 row no-lrpadding">
+                                <div class="col-lg-4 col-md-4 col-sm-12 col-12 pad_small0">
+                                    <label data-lang-token="accountName">Account Name</label>
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-12 col-12 padL0 pad_small_R0">
+                                    <input type="text" class="form-control" id="accountName" ng-model="vm.vars.accountName" autocomplete="off">
+                                </div>
+                            </div>
+                            <!--Department-->
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12 row no-lrpadding">
+                                <div class="col-lg-4 col-md-4 col-sm-12 col-12 pad_small0">
+                                    <label data-lang-token="Department">Department</label>
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-12 col-12 padL0 pad_small_R0">  
+                                    <div class="input-group date div_from_date datepicker">
+                                        <input type="text" id="Department" ng-model="vm.vars.Department" />
+                                    </div> &#160;
+                                </div> 
+                            </div>
+                            <!--Division-->
+                            <div class="col-lg-4 col-md-4 col-sm-12 col-12 row no-lrpadding">
+                                <div class="col-lg-4 col-md-4 col-sm-12 col-12 pad_small0">
+                                    <label data-lang-token="Division">Divison</label>
+                                </div>
+                                <div class="col-lg-8 col-md-8 col-sm-12 col-12 padL0 pad_small_R0">
+                                    <select  name="Division" ng-model="vm.vars.Division">
+                                        <option ng-repeat="item in vm.vars.cbboxDivision.results">{{item.title}}</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-search col-sm-12 no-padding">
+                    <div class="col-md-12  footer-box-bg clearfix">
+                        <button type="button" class="btn btn-sm btn-primary btn-submit" ng-click="vm.fn.searchUserProfile(false)">
+                            <span data-lang-token="search">Search</span>
+                        </button>
+                        <button type="button" class="btn-cancel btn-default" id="btn_clear" ng-click="vm.fn.btnResetSearchCriteria()">
+                            <i class="fa fa-eraser" aria-hidden="true"></i>
+                            <span data-lang-token="clear">Clear</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="alert alert-danger alert-dismissible fade in error-list hide" role="alert"> &#160;</div>
+            <!-- end search box -->
+            <div class="bg-content col-sm-12 bg-content-tbl">
+                <div data-toggle="collapse" data-target="#psp_list" class="header-box collapsed" aria-expanded="false">
+                    <h5 data-lang-token="list">List<br /></h5>
+                    <i class="fa fa-minus pull-right" aria-hidden="true"></i>
+                </div>
+                <div class="collapse" id="psp_list">
+                    <div class="content-table clearfix table_scroll_small acT6">
+                        <table id="resultContent"></table>
+                        <div id="pager">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- end scroll search result-->
+            <!-- table show results-->
+            <div id="assetplanningsearch_list">
+                <div > <!--loading-panel="vm.vars.isLoadingShown"-->
+                    <table class="table to-tbl tbl-credit-scoring" st-table="vm.vars.gridData.result" st-pipe="vm.fn.callServer">
+                        <thead>
+                            <tr>
+                                <th><input type="checkbox" id="checkAll" ng-click="vm.fn.checkAll()"/></th>
+                                <th>#</th>
+                                <th st-sort="Title">Title</th>
+                                <th st-sort="AccountName">Account Name</th>
+                                <th st-sort="JobTitle">Job Title</th>
+                                <th st-sort="Department">Department</th> 
+                                <th st-sort="Division">Division</th>
+                                <th st-sort="Office">Office</th>
+                                <th st-sort="LineManager">Line Manager</th>
+                                <th st-sort="User">User</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="item in vm.vars.gridData.result track by item.ID">
+                                <td>
+                                    <input type="checkbox" id="checkItem" />
+                                </td>
+                                <td>{{(vm.vars.tableState.pagination.start) + $index + 1}}</td>
+                                <td>{{::item.Title}}</td>
+                                <td>{{::item.AccountName}}</td>
+                                <td>{{::item.JobTitle}}</td>
+                                <td>{{::item.Department}}</td>
+                                <td>{{::item.Division}}</td>
+                                <th>{{::item.Office}}</th>
+                                <th>{{::item.LineManager.Title}}</th>
+                                <th>{{::item.User.Title}}</th>
+                               <td>
+                                   <a href="#" ng-click="vm.vars.editRow()">Edit</a>| <a href="#" ng-click="vm.vars.deleteRow()">Delete</a>
+                               </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="display:none"></td>
+                                <td class="text-center" colspan="7">
+                                    <button id="btnShowMore" type="button" class="btn btn-sm btn-primary btn-submit" ng-click="vm.fn.searchUserProfile(true)">
+                                        <span data-lang-token="Show more">Show more</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
